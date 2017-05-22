@@ -13,6 +13,7 @@ namespace MvxAndXamForms.iOS
     using MvvmCross.Core.ViewModels;
     using MvvmCross.Forms.Presenter.Core;
     using MvvmCross.iOS.Views.Presenters;
+    using MvvmCross.Platform;
     using Xamarin.Forms;
 
     public class HybridPresenter : MvxIosViewPresenter
@@ -44,27 +45,37 @@ namespace MvxAndXamForms.iOS
 
         public override void Show(MvxViewModelRequest request)
         {
-            var viewFromXF = request.ViewModelType.GetCustomAttributes(typeof(ViewFromXamarinFormsAttribute), false);
+            var viewFromXf = request.ViewModelType.GetCustomAttributes(typeof(ViewFromXamarinFormsAttribute), false);
 
-            if (viewFromXF.Any())
+            if (viewFromXf.Any())
             {
                 var contentPage = MvxPresenterHelpers.CreatePage(request);
                 //set DataContext of page to LoadViewModel
                 var viewModel = MvxPresenterHelpers.LoadViewModel(request);
 
                 contentPage.BindingContext = viewModel;
-                //use CreateViewController 
+                
+                var mainPage = this.MvxFormsApp.MainPage as NavigationPage;
 
-                var uIViewController = contentPage.CreateViewController();
+                if (mainPage == null)
+                {
+                    this.MvxFormsApp.MainPage = new NavigationPage(contentPage);
+                    mainPage = MvxFormsApp.MainPage as NavigationPage;
+                }
+
+                UIViewController vc = contentPage.CreateViewController();
+
+                vc.NavigationItem.Title = contentPage.Title;
+
                 if (this.MasterNavigationController == null)
                 {
-                    this.ShowFirstView(uIViewController);
+                    _window.RootViewController = vc;
                 }
                 else
                 {
-                    this.MasterNavigationController.PushViewController(uIViewController, true);
+                    
+                    this.MasterNavigationController.PushViewController(vc, true);
                 }
-
             }
             else
             {

@@ -53,7 +53,7 @@ namespace MvxAndXamForms.Droid
             
             LoadApplication(presenter.MvxFormsApp);
 
-            this.Title = "MvxForms Host";
+            ////this.Title = "MvxForms Host";
 
             LifetimeListener.OnCreate(this);
         }

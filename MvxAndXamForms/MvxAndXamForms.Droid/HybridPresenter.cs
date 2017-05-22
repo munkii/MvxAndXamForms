@@ -135,6 +135,7 @@ namespace MvxAndXamForms.Droid
             this.Activity.StartActivity(typeof(MvxFormsApplicationActivity));
 
             NavigationPage navigationPage = new NavigationPage(contentPage);
+            navigationPage.Title = string.Format("{0} (copy)", contentPage.Title);
             mvxFormsApp.MainPage = navigationPage;
         }
     }
